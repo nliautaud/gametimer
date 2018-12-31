@@ -20,6 +20,10 @@
           settingName="showColors"
           text="Afficher les couleurs"
           />
+        <OptionToggle
+          settingName="alwaysSwitchToNext"
+          text="Toujours passer au tour suivant"
+          />
       </div>
 
       <TimePlayerSelector />

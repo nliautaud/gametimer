@@ -38,7 +38,8 @@ export default new Vuex.Store({
       useCountdown: false,
       showMilliseconds: true,
       showColors: true,
-      layout: 'default' // default, facing, table
+      layout: 'default', // default, facing, table
+      alwaysSwitchToNext: true
     }
   },
   mutations: {
@@ -70,6 +71,9 @@ export default new Vuex.Store({
       state.isPaused = true
       state.noSleep.disable()
     },
+    turn (state, index) {
+      state.currentTimer = index
+    },
     nextTurn (state) {
       if (state.currentTimer >= state.timers.length - 1) {
         state.currentTimer = 0
@@ -91,11 +95,22 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    tap ({ commit, state, index }) {
-      if (state.isPaused) commit('resume')
-      else if (state.timers.length === 1) {
-        commit('pause')
-      } else commit('nextTurn')
+    tap ({ commit, state }, index) {
+      if (state.settings.alwaysSwitchToNext) {
+        if (state.timers.length === 1) {
+          commit(state.isPaused ? 'resume' : 'pause')
+        } else {
+          if (state.isPaused) commit('resume')
+          commit('nextTurn', index)
+        }
+      } else {
+        if (state.currentTimer === index) {
+          commit(state.isPaused ? 'resume' : 'pause')
+        } else {
+          if (state.isPaused) commit('resume')
+          commit('turn', index)
+        }
+      }
     }
   },
   getters: {
