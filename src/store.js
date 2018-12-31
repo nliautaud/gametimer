@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment'
+import NoSleep from 'nosleep.js'
 
 Vue.use(Vuex)
 
@@ -30,6 +31,7 @@ export default new Vuex.Store({
     timerInterval: 10,
     isPaused: true,
     showSettings: false,
+    noSleep: new NoSleep(),
     settings: {
       timeByPlayer: null,
       timeByTurn: null,
@@ -62,9 +64,11 @@ export default new Vuex.Store({
     },
     resume (state) {
       state.isPaused = false
+      state.noSleep.enable()
     },
     pause (state) {
       state.isPaused = true
+      state.noSleep.disable()
     },
     nextTurn (state) {
       if (state.currentTimer >= state.timers.length - 1) {
