@@ -35,12 +35,14 @@ export default new Vuex.Store({
       timeByTurn: null,
       useCountdown: false,
       showMilliseconds: true,
-      showColors: true
+      showColors: true,
+      layout: 'default' // default, facing, table
     }
   },
   mutations: {
     addTimer (state) {
       state.timers.push({
+        id: state.timers.length,
         name: '',
         elapsed: moment.duration(0),
         lastTick: null,

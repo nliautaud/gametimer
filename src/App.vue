@@ -1,13 +1,13 @@
 <template>
-  <div id="app">
-    <Navbar/>
-    <main class="timers has-background-grey-lighter">
-      <Timer
-        v-for="(timer, index) in $store.state.timers"
-        :key="index"
-        :index="index"
-        />
-    </main>
+  <div id="app" class="has-background-grey-lighter">
+    <component
+      v-for="block in blocks"
+      :key="block.id"
+      :index="block.id == 'controlbar' ? undefined : block.id"
+      :is="block.id == 'controlbar' ? 'Navbar' : 'Timer'"
+      :class="block.id"
+      :style="style(block)"
+      />
     <SettingsModal/>
   </div>
 </template>
@@ -25,8 +25,44 @@ export default {
     Timer
   },
   mounted () {
-    this.$store.commit('addTimer')
-    this.$store.commit('addTimer')
+    while(this.$store.state.timers.length < 2) {
+      this.$store.commit('addTimer')
+    }
+  },
+  computed: {
+    blocks() {
+      let blocks = this.$store.state.timers.slice(0)
+      
+      let controlBarPos = 0
+      if (this.$store.state.settings.layout != 'default') {
+        controlBarPos = Math.ceil(blocks.length / 2)
+      }
+      blocks.splice(controlBarPos, 0, {
+        id: 'controlbar'
+      })
+      return blocks
+    }
+  },
+  methods: {
+    style (block) {
+      let count = this.$store.state.timers.length
+      switch (this.$store.state.settings.layout) {
+        case 'facing':
+          return this.styleFacing(block, count)
+        default:
+          return
+      }
+    },
+    styleFacing (block, count) {
+      let style = {}
+      if (block.id !== 'controlbar'
+      && block.id < count / 2
+      && count > 1
+      ) {
+        style.transform = 'scaleY(-1)'
+      }
+      return style
+    }
   }
 }
 </script>
@@ -46,19 +82,14 @@ body,
 
   display: flex
   flex-flow: column
+    justify-content: center
 
   header
     display: flex
     padding: 1em
 
-  .timers
-    display: flex
-    flex-flow: column
+  .timer
     flex: 1
-    justify-content: center
-
-    .timer
-      flex: 1
-      &.is-active
-        flex: 2
+    &.is-active
+      flex: 2
 </style>
