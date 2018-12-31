@@ -9,11 +9,12 @@
           type="number"
           min="O"
           placeholder="-"
+          disabled
           v-model="timeByTurn">
       </p>
       <p class="control">
         <span class="select">
-          <select v-model="unit">
+          <select v-model="unit" disabled>
             <option value="minutes">Minutes</option>
             <option value="seconds">Secondes</option>
           </select>
