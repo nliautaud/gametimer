@@ -3,7 +3,7 @@
     <p class="control">
       <span class="select">
         <select
-          v-model="$i18n.locale">
+          v-model="locale">
           <option
             v-for="(lang, i) in langs"
             :key="`Lang${i}`"
@@ -24,6 +24,20 @@ export default {
         {code: 'fr', name: 'Francais'}
       ]
     }
-  }
+  },
+  computed: {
+    locale: {
+      get () {
+        return this.$i18n.locale
+      },
+      set (value) {
+        this.$i18n.locale = value
+        this.$store.commit('changeSetting', {
+          setting: 'locale',
+          value: value
+        })
+      }
+    }
+  },
 }
 </script>

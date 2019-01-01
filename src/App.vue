@@ -40,6 +40,7 @@ export default {
     Timer
   },
   mounted () {
+    this.$i18n.locale = this.$store.state.settings.locale
     while(this.$store.state.timers.length < 2) {
       this.$store.commit('addTimer')
     }

@@ -2,39 +2,46 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import moment from 'moment'
 import NoSleep from 'nosleep.js'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
+const noSleep = new NoSleep()
+// sorted by accessibility
+const colors = [
+  '#ffe119',
+  '#4363d8',
+  '#f58231',
+  '#fabebe',
+  '#e6beff',
+  '#800000',
+  '#000075',
+  '#a9a9a9',
+  '#e6194B',
+  '#3cb44b',
+  '#42d4f4',
+  '#f032e6',
+  '#469990',
+  '#9A6324',
+  '#fffac8',
+  '#aaffc3',
+  '#911eb4'
+]
 export default new Vuex.Store({
+  plugins: [
+    createPersistedState({
+      paths: ['timers', 'currentTimer', 'settings']
+    })
+  ],
   state: {
     timers: [],
-    colors: [ // sorted by accessibility
-      '#ffe119',
-      '#4363d8',
-      '#f58231',
-      '#fabebe',
-      '#e6beff',
-      '#800000',
-      '#000075',
-      '#a9a9a9',
-      '#e6194B',
-      '#3cb44b',
-      '#42d4f4',
-      '#f032e6',
-      '#469990',
-      '#9A6324',
-      '#fffac8',
-      '#aaffc3',
-      '#911eb4'
-    ],
     currentTimer: null,
     timerInterval: 10,
     isPaused: true,
     showSettings: false,
     hideBars: false,
-    noSleep: new NoSleep(),
     settings: {
-      locale: 'en',
+      locale: navigator.language || 'en',
       timeByPlayer: null,
       timeByTurn: null,
       useCountdown: false,
@@ -52,7 +59,7 @@ export default new Vuex.Store({
         elapsed: moment.duration(0),
         lastTick: null,
         interval: null,
-        color: state.colors[state.timers.length]
+        color: colors[state.timers.length]
       })
     },
     removeTimer (state) {
@@ -70,11 +77,11 @@ export default new Vuex.Store({
         state.currentTimer = 0
       }
       state.isPaused = false
-      state.noSleep.enable()
+      noSleep.enable()
     },
     pause (state) {
       state.isPaused = true
-      state.noSleep.disable()
+      noSleep.disable()
     },
     turn (state, index) {
       state.currentTimer = index
