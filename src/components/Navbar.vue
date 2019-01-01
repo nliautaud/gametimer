@@ -5,19 +5,20 @@
     aria-label="main navigation">
     <div class="level-left">
       <div class="level-item">
-        <button class="button is-outlined is-primary"
-          @click="$store.commit('addTimer')">+</button>
-      </div>
-      <div class="level-item">
-        <button class="button is-outlined is-primary"
-          @click="$store.commit('removeTimer')">-</button>
+        <button 
+          class="button is-dark"
+          @click="$store.commit('toggleSettings')">
+          GameTimer
+        </button>
       </div>
     </div>
 
     <div class="level-item">
-      <PlayPauseButton
-        :isPaused="$store.state.isPaused"
-        />
+      <button 
+        class="button is-dark"
+        @click="$store.commit('toggleBars')">
+        <span class="chevron chevron-top"/>
+      </button>
     </div>
 
     <div class="level-right">
@@ -25,7 +26,7 @@
         <button 
           class="button is-dark"
           @click="$store.commit('toggleSettings')">
-          Settings
+          {{ $t('settings') }}
         </button>
       </div>
     </div>
@@ -33,10 +34,8 @@
 </template>
 
 <script>
-import PlayPauseButton from './PlayPauseButton.vue'
 export default {
   components: {
-    PlayPauseButton
   }
 }
 </script>

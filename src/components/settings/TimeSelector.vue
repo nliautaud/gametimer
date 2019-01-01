@@ -1,21 +1,21 @@
 <template>
   <div class="field">
     <label class="label has-text-light">
-      Temps par joueur
+      {{ text }}
     </label>
-    <div class="field has-addons has-addons-centered">
+    <div class="field has-addons">
       <p class="control">
         <input class="input"
           type="number"
           min="O"
           placeholder="-"
-          v-model="timeByPlayer">
+          v-model="model">
       </p>
       <p class="control">
         <span class="select">
           <select v-model="unit">
-            <option value="minutes">Minutes</option>
-            <option value="seconds">Secondes</option>
+            <option value="minutes">{{ $t('minutes') }}</option>
+            <option value="seconds">{{ $t('seconds') }}</option>
           </select>
         </span>
       </p>
@@ -26,15 +26,19 @@
 <script>
 const moment = require('moment')
 export default {
+  props: {
+    text: String,
+    settingName: String
+  },
   data: () => {
     return {
-      unit: 'minutes'
+      unit: 'seconds'
     }
   },
   computed: {
-    timeByPlayer: {
+    model: {
       get () {
-        let time = this.$store.getters.timeByPlayer
+        let time = this.$store.getters[this.settingName]
         if (time == null) return
         switch (this.unit) {
           case 'minutes':
@@ -47,7 +51,7 @@ export default {
         let duration = null
         if (value) duration = moment.duration(parseInt(value), this.unit).asSeconds()
         this.$store.commit('changeSetting', {
-          setting: 'timeByPlayer',
+          setting: this.settingName,
           value: duration
         })
       }
@@ -60,3 +64,16 @@ export default {
 input
   width: 5em !important
 </style>
+
+<i18n>
+{
+  "en": {
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "fr": {
+    "minutes": "Minutes",
+    "seconds": "Secondes"
+  }
+}
+</i18n>

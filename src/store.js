@@ -27,12 +27,14 @@ export default new Vuex.Store({
       '#aaffc3',
       '#911eb4'
     ],
-    currentTimer: 0,
+    currentTimer: null,
     timerInterval: 10,
     isPaused: true,
     showSettings: false,
+    hideBars: false,
     noSleep: new NoSleep(),
     settings: {
+      locale: 'en',
       timeByPlayer: null,
       timeByTurn: null,
       useCountdown: false,
@@ -75,7 +77,8 @@ export default new Vuex.Store({
       state.currentTimer = index
     },
     nextTurn (state) {
-      if (state.currentTimer >= state.timers.length - 1) {
+      if (state.currentTimer == null ||
+      state.currentTimer >= state.timers.length - 1) {
         state.currentTimer = 0
       } else state.currentTimer++
     },
@@ -92,6 +95,9 @@ export default new Vuex.Store({
       if (!opt.setting) return
       if (state.settings[opt.setting] === undefined) return
       state.settings[opt.setting] = opt.value
+    },
+    toggleBars (state) {
+      state.hideBars = !state.hideBars
     }
   },
   actions: {

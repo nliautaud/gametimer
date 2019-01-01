@@ -73,7 +73,7 @@ export default {
       let style = {}
       style.backgroundColor = this.showColors
         ? this.timer.color
-        : '#ccc'
+        : '#242424'
 
       return style
     },
@@ -149,9 +149,10 @@ export default {
   &.is-active
     font-size: 4rem
   cursor: pointer
-  transition: all .18s cubic-bezier(0.21, -0.01, 0.61, 1.26)
+  transition: all .18s cubic-bezier(0.21, -0.01, 0.61, 1.26), padding 0s linear
   user-select: none
-  padding: .5rem 0
+  &:not(:last-child)
+    padding-bottom: 1rem
 
   .inner
     width: 100%
