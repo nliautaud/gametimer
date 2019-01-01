@@ -66,6 +66,9 @@ export default new Vuex.Store({
       state.timers[payload.index].name = payload.value
     },
     resume (state) {
+      if (state.currentTimer == null) {
+        state.currentTimer = 0
+      }
       state.isPaused = false
       state.noSleep.enable()
     },
@@ -106,8 +109,12 @@ export default new Vuex.Store({
         if (state.timers.length === 1) {
           commit(state.isPaused ? 'resume' : 'pause')
         } else {
-          if (state.isPaused) commit('resume')
-          commit('nextTurn', index)
+          if (state.isPaused && state.currentTimer === null) {
+            commit('resume')
+          } else {
+            commit('nextTurn')
+            commit('resume')
+          }
         }
       } else {
         if (state.currentTimer === index) {
