@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="level is-mobile has-background-dark"
+    class="level is-mobile"
     role="navigation"
     aria-label="main navigation">
     <div class="level-left">

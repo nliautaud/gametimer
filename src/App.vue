@@ -1,18 +1,22 @@
 <template>
   <div
     id="app"
-    class="has-background-dark"
     :class="{'bars-hidden': $store.state.hideBars}"
     >
     <Navbar class="bar top" @dblclick.native="hideBars"/>
-    <div class="bar top-back has-background-dark">
+    <div class="bar top-back">
       <button 
         class="button is-dark"
         @click="$store.commit('toggleBars')">
         <span class="chevron"/>
       </button>
     </div>
-    <main class="timers">
+    <main
+      class="timers"
+      :class="{
+        'has-2': $store.state.timers.length === 2,
+        'has-3-or-more': $store.state.timers.length >= 3,
+      }">
       <Timer
         v-for="timer in $store.state.timers"
         :key="timer.id"
@@ -81,11 +85,15 @@ body,
 #app
   height: 100%
 
+html,
+body,
+.bar
+  background-color: #363636
+
 #app
   font-family: 'Avenir', Helvetica, Arial, sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
-  color: #2c3e50
 
   .chevron
     width: 2em
@@ -129,24 +137,40 @@ body,
       bottom: 0
     
   .timers 
-    display: flex
-    flex-flow: column
-    justify-content: center
-    height: 100%
+    display: grid
+    grid-template: auto / 1fr
+    min-height: 100%
     padding: 48pt 0
+    overflow: auto
     transition: all .25s ease
+
+    &.has-2
+      @media (min-aspect-ratio: 2/3)
+        grid-template: auto / 1fr 1fr
+    &.has-3-or-more
+      @media (min-aspect-ratio: 2/3)
+        grid-template: auto / 1fr 1fr
+      @media (min-aspect-ratio: 1/1) and (min-width: 50em)
+        grid-template: auto / 1fr 1fr 1fr
+
     .timer
-      flex: 1
-      &.is-active
-        flex: 2
+      .inner
+        padding: 1rem
+        transition: all .2s cubic-bezier(0.37, -0.43, 0.49, 1.71)
+        transform: scale(.9)
+      &.is-active .inner
+        transform: scale(1)
+    
   
 
   &.bars-hidden
     .bar
       &.top
         transform: translateY(-50pt)
+        opacity: 0
       &.bottom
         transform: translateY(50pt)
+        opacity: 0
     .timers
       padding-top: 25pt
       padding-bottom: 0

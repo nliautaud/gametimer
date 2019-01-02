@@ -13,7 +13,20 @@
           'has-background-grey': !isActive,
           'has-background-light': isActive
         }">
-        <div class="time">{{ displayTime }}</div>
+        <div class="time">
+
+          <template v-if="hours || (maxTime && maxTime.hours())">
+            <span class="hours" v-html="time.hours()" />
+            <span class="hours-sep">:</span>
+          </template>
+          <span class="minutes" v-html="minutes" />
+          <span class="minutes-sep">:</span>
+          <span class="seconds" v-html="seconds" />
+          <template v-if="$store.state.settings.showMilliseconds">
+            <span class="millis-sep">.</span>
+            <span class="millis" v-html="milliseconds" />
+          </template>
+        </div>
         <progress
           v-if="$store.getters.timeByPlayer"
           class="progress is-small is-success"
@@ -31,7 +44,6 @@
 
 <script>
 const moment = require('moment')
-require('moment-duration-format')
 
 export default {
   props: {
@@ -88,7 +100,13 @@ export default {
         })
       }
     },
-    displayTime () {
+    maxTime () {
+      if (this.$store.getters.timeByPlayer) {
+        return this.$store.getters.timeByPlayer.clone()
+      }
+      return null
+    },
+    time () {
       let time = this.elapsed
 
       if (this.$store.state.settings.useCountdown) {
@@ -97,14 +115,23 @@ export default {
         } else time = moment.duration(0)
         time.subtract(this.elapsed)
       }
-
-      return time.format(this.displayFormat, {
-        trim: false
-      })
+      
+      return time
     },
-    displayFormat () {
-      if (this.$store.state.settings.showMilliseconds) return 'm:ss:SS'
-      return 'm:ss'
+    hours () {
+      return this.time.hours()
+    },
+    minutes () {
+      return this.pad(this.time.minutes(), 2)
+    },
+    seconds () {
+      return this.pad(this.time.seconds(), 2)
+    },
+    milliseconds () {
+      if (!this.$store.state.settings.showMilliseconds) {
+        return null
+      }
+      return this.pad(this.time.milliseconds(), 2)
     },
     progress () {
       let r = this.elapsed.asSeconds() / this.$store.getters.timeByPlayer.asSeconds()
@@ -129,11 +156,20 @@ export default {
     },
     onTap () {
       this.$store.dispatch('tap', this.index)
+    },
+    pad (num, length) {
+      let str = num.toString().substring(0, length)
+      while (str.length < length)
+        str = '0' + str;
+      return str;
     }
   },
   watch: {
     isRunning: function (value) {
-      if (value) this.start()
+      if (value) {
+        this.start()
+        this.$el.scrollIntoView(false)
+      }
       else this.stop()
     }
   },
@@ -146,13 +182,8 @@ export default {
 <style scoped lang="sass">
 .timer
   font-size: 2.5rem
-  &.is-active
-    font-size: 4rem
   cursor: pointer
-  transition: all .18s cubic-bezier(0.21, -0.01, 0.61, 1.26), padding 0s linear
   user-select: none
-  &:not(:last-child)
-    padding-bottom: 1rem
 
   .inner
     width: 100%
@@ -161,6 +192,11 @@ export default {
     display: flex
     justify-content: center
     align-items: center
+    padding: 1rem
+    border-radius: 5px
+  &.is-active
+    .inner
+      border-radius: 0px
   
   .timer-content
     position: relative
